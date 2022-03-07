@@ -1,68 +1,68 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
+import PostForm from "./components/PostForm";
 import PostList from "./components/PostList";
-import MyButton from "./components/UI/button/MyButton";
-import MyInput from "./components/UI/input/MyInput";
+import MySelect from "./components/UI/select/MySelect";
 import "./styles/App.css";
 
 function App() {
+  // -- Local State
   // Хуки состояния (локальный state)
   const [posts, setPosts] = useState([
-    { id: 1, title: "JavaScript 1", body: "Description" },
-    { id: 2, title: "JavaScript 2", body: "Description" },
-    { id: 3, title: "JavaScript 3", body: "Description" },
-    { id: 4, title: "JavaScript 4", body: "Description" },
-    { id: 5, title: "JavaScript 5", body: "Description" },
+    { id: 1, title: "JavaScript", body: "Description" },
+    { id: 2, title: "Python", body: "Description" },
+    { id: 3, title: "C++", body: "Description" },
+    { id: 4, title: "C#", body: "Description" },
+    { id: 5, title: "Java", body: "Description" },
   ]);
 
-  // Управляемые компоненты
-  const [post, setPost] = useState({
-    title: "",
-    body: "",
-  });
+  const [selectedSort, setSelectedSort] = useState("");
 
-  // Неуправляемый компонент
-  const bodyInputRef = useRef();
+  // -- Functions
+  /** Создание поста */
+  const createPost = (newPost) => {
+    setPosts([...posts, newPost]);
+  };
 
-  const addNewPost = (e) => {
-    e.preventDefault();
+  /** Удаление поста */
+  const removePost = (post) => {
+    setPosts(posts.filter((p) => p.id !== post.id));
+  };
 
-    // Сетаем посты в локальный state
-    setPosts([...posts, {...post, id: Date.now()}]);
-
-    // Обнуление полей ввода
-    setPost({
-      title: "",
-      body: "",
-    });
-
-    // Для неуправляемого компонента (вывод пример)
-    // console.log('body: ', bodyInputRef.current.value);
+  /** Сортирование постов */
+  const sortPosts = (sort) => {
+    setPosts([...posts].sort((a, b) => {
+      return a[sort].localeCompare(b[sort])
+    }
+    ));
   };
 
   return (
     <div className="App">
-      <form>
-        {/* Управляемые компоненты */}
-        <MyInput
-          value={post.title}
-          onChange={(e) => setPost({...post, title: e.target.value})}
-          type="text"
-          placeholder="Название поста"
+      {/* -- Форма -- */}
+      <PostForm create={createPost} />
+
+      <hr style={{ margin: "15px 0" }} />
+
+      {/* Сортировка */}
+      <div>
+        <MySelect
+          value={selectedSort}
+          onChange={sortPosts}
+          defaultValue="Сортировка"
+          option={[
+            { value: "title", name: "По названию" },
+            { value: "body", name: "По описанию" },
+          ]}
         />
-        <MyInput
-          value={post.body}
-          onChange={(e) => setPost({...post, body: e.target.value})}
-          type="text"
-          placeholder="Описание поста"
-        />
+      </div>
 
-        {/* Неуправляемый (неконтролируемый) компонент */}
-        {/* <MyInput ref={bodyInputRef} type="text" placeholder="Описание поста" /> */}
-
-        <MyButton onClick={addNewPost}>Создать пост</MyButton>
-      </form>
-
-      <PostList posts={posts} title="Список постов" />
+      {/* -- Посты -- */}
+      {/* Условная отрисовка */}
+      {posts.length !== 0 ? (
+        <PostList remove={removePost} posts={posts} title="Список постов" />
+      ) : (
+        <h1 style={{ textAlign: "center" }}>Посты не найдены!</h1>
+      )}
     </div>
   );
 }
