@@ -1,4 +1,5 @@
-import React, { useRef, useState } from "react";
+// @ts-ignore
+import React, { useState } from "react";
 import MyButton from "./UI/button/MyButton";
 import MyInput from "./UI/input/MyInput";
 
@@ -38,12 +39,14 @@ function PostForm({ create }) {
       <form>
         {/* Управляемые компоненты */}
         <MyInput
+          // @ts-ignore
           value={post.title}
           onChange={(e) => setPost({ ...post, title: e.target.value })}
           type="text"
           placeholder="Название поста"
         />
         <MyInput
+          // @ts-ignore
           value={post.body}
           onChange={(e) => setPost({ ...post, body: e.target.value })}
           type="text"
